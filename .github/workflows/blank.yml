@@ -7,19 +7,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-          sudo systemctl enable docker
-
       - name: Run Apache in Docker
         run: |
           sudo docker run -d -p 80:80 httpd:latest
 
       - name: Install ddclient
         run: |
+          sudo apt-get update
           sudo apt-get install -y ddclient
 
       - name: Configure ddclient
