@@ -1,0 +1,39 @@
+name: Setup Apache Docker with DDNS
+
+on: [workflow_dispatch]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
+      - name: Run Apache in Docker
+        run: |
+          sudo docker run -d -p 80:80 httpd:latest
+
+      - name: Install ddclient
+        run: |
+          sudo apt-get install -y ddclient
+
+      - name: Configure ddclient
+        run: |
+          cat <<EOF | sudo tee /etc/ddclient.conf
+          protocol=dyndns2
+          use=web, web=checkip.dyndns.com
+          server=dynupdate.no-ip.com
+          login=${{ secrets.NOIP_USER }}
+          password='${{ secrets.NOIP_PASS }}'
+          machina-ubuntu.ddns.net
+          EOF
+
+      - name: Restart ddclient service
+        run: |
+          sudo systemctl restart ddclient
+          sudo systemctl enable ddclient
