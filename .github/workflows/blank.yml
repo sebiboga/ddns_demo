@@ -31,3 +31,5 @@ jobs:
         run: |
           sudo systemctl restart ddclient
           sudo systemctl enable ddclient
+      - name: Wait for 3 minutes
+        run: sleep 180
